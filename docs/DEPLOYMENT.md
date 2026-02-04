@@ -1,5 +1,7 @@
 # Hướng dẫn Triển khai - Hệ thống KPI ICTU
 
+> **⚠️ Security Notice**: Ensure you install the latest dependencies to address known vulnerabilities. See [SECURITY.md](../SECURITY.md) for details.
+
 ## Yêu cầu Hệ thống
 
 ### Phần mềm cần thiết:

@@ -1,5 +1,7 @@
 # Hệ thống đánh giá VC-NLĐ thông qua KPIs tại Trường Đại học Công nghệ Thông tin và Truyền thông (ICTU)
 
+> **Security Update (2024-02-04)**: Updated Next.js to v14.2.35 to address critical security vulnerabilities. See [SECURITY.md](SECURITY.md) for details.
+
 ## Giới thiệu
 
 Hệ thống quản lý và đánh giá hiệu suất làm việc của Viên chức - Người lao động (VC-NLĐ) thông qua các chỉ số KPI (Key Performance Indicators) tại Trường Đại học Công nghệ Thông tin và Truyền thông.
