@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Kỳ đánh giá - Hệ thống KPI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2><i class="bi bi-calendar-check-fill"></i> Kỳ đánh giá</h2>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        {% if current_user.role in ['admin', 'manager'] %}
+        <a href="{{ url_for('evaluation.create_period') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Tạo kỳ đánh giá mới
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    {% if periods %}
+        {% for period in periods %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header {% if period.is_active %}bg-success{% else %}bg-secondary{% endif %} text-white">
+                    <h5 class="mb-0">
+                        {{ period.name }}
+                        {% if period.is_active %}
+                        <span class="badge bg-light text-success float-end">Đang mở</span>
+                        {% else %}
+                        <span class="badge bg-light text-secondary float-end">Đã đóng</span>
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <i class="bi bi-calendar-event"></i> 
+                        <strong>Thời gian:</strong> 
+                        {{ period.start_date.strftime('%d/%m/%Y') }} - {{ period.end_date.strftime('%d/%m/%Y') }}
+                    </p>
+                    <p class="mb-2">
+                        <i class="bi bi-clipboard-check"></i>
+                        <strong>Số đánh giá:</strong> {{ period.evaluations|length }}
+                    </p>
+                    <p class="mb-0">
+                        <small class="text-muted">Tạo ngày: {{ period.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                Chưa có kỳ đánh giá nào.
+                {% if current_user.role in ['admin', 'manager'] %}
+                <a href="{{ url_for('evaluation.create_period') }}">Tạo kỳ đánh giá mới</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

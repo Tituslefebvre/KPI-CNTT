@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Danh mục KPI - Hệ thống KPI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2><i class="bi bi-bar-chart-fill"></i> Danh mục KPI</h2>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        {% if current_user.role in ['admin', 'manager'] %}
+        <a href="{{ url_for('kpi.create_category') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Thêm danh mục
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    {% if categories %}
+        {% for category in categories %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">{{ category.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ category.description }}</p>
+                    <hr>
+                    <p class="mb-1"><strong>Trọng số:</strong> {{ category.weight }}%</p>
+                    <p class="mb-1"><strong>Số chỉ số:</strong> {{ category.indicators|length }}</p>
+                    <p class="mb-0"><small class="text-muted">Tạo: {{ category.created_at.strftime('%d/%m/%Y') }}</small></p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('kpi.indicators') }}?category_id={{ category.id }}" class="btn btn-sm btn-info">
+                        <i class="bi bi-list"></i> Xem chỉ số
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                Chưa có danh mục KPI nào. 
+                {% if current_user.role in ['admin', 'manager'] %}
+                <a href="{{ url_for('kpi.create_category') }}">Tạo danh mục mới</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

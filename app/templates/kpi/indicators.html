@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Chỉ số KPI - Hệ thống KPI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2><i class="bi bi-graph-up"></i> Chỉ số KPI</h2>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        {% if current_user.role in ['admin', 'manager'] %}
+        <a href="{{ url_for('kpi.create_indicator') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Thêm chỉ số KPI
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if indicators.items %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Tên chỉ số</th>
+                        <th>Danh mục</th>
+                        <th>Đơn vị đo</th>
+                        <th>Trọng số</th>
+                        <th>Mục tiêu</th>
+                        <th>Điểm tối đa</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for indicator in indicators.items %}
+                    <tr>
+                        <td><strong>{{ indicator.code }}</strong></td>
+                        <td>{{ indicator.name }}</td>
+                        <td><span class="badge bg-secondary">{{ indicator.category.name }}</span></td>
+                        <td>{{ indicator.measurement_unit }}</td>
+                        <td>{{ indicator.weight }}%</td>
+                        <td>{{ indicator.target_value }}</td>
+                        <td>{{ indicator.max_score }}</td>
+                        <td>
+                            <a href="{{ url_for('kpi.indicator_detail', id=indicator.id) }}" class="btn btn-sm btn-info">
+                                <i class="bi bi-eye"></i> Xem
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if indicators.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('kpi.indicators', page=indicators.prev_num) }}">Trước</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in indicators.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                    {% if page_num %}
+                        {% if page_num == indicators.page %}
+                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('kpi.indicators', page=page_num) }}">{{ page_num }}</a></li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if indicators.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('kpi.indicators', page=indicators.next_num) }}">Sau</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% else %}
+        <p class="text-muted">Chưa có chỉ số KPI nào.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

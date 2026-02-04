@@ -1,0 +1,57 @@
+/* Custom styles for KPI System */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,0.1);
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+}
+
+footer {
+    margin-top: auto;
+}
+
+/* Dashboard cards */
+.bg-primary .display-4,
+.bg-success .display-4,
+.bg-info .display-4 {
+    font-weight: bold;
+}
+
+/* Form styling */
+.form-label {
+    font-weight: 600;
+}
+
+/* Button improvements */
+.btn {
+    border-radius: 5px;
+}
+
+.btn-sm {
+    font-size: 0.875rem;
+}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Danh sách Viên chức - Hệ thống KPI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2><i class="bi bi-people-fill"></i> Danh sách Viên chức</h2>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        {% if current_user.role in ['admin', 'manager'] %}
+        <a href="{{ url_for('staff.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Thêm viên chức
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if staff_list.items %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã VC</th>
+                        <th>Họ và tên</th>
+                        <th>Khoa/Phòng ban</th>
+                        <th>Chức vụ</th>
+                        <th>Học vị</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for staff in staff_list.items %}
+                    <tr>
+                        <td><strong>{{ staff.staff_code }}</strong></td>
+                        <td>{{ staff.user.full_name }}</td>
+                        <td>{{ staff.department }}</td>
+                        <td>{{ staff.position }}</td>
+                        <td>
+                            {% if staff.academic_rank %}{{ staff.academic_rank }}, {% endif %}
+                            {{ staff.degree or 'N/A' }}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('staff.detail', id=staff.id) }}" class="btn btn-sm btn-info">
+                                <i class="bi bi-eye"></i> Xem
+                            </a>
+                            {% if current_user.role in ['admin', 'manager'] %}
+                            <a href="{{ url_for('staff.edit', id=staff.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if staff_list.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('staff.list', page=staff_list.prev_num) }}">Trước</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in staff_list.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                    {% if page_num %}
+                        {% if page_num == staff_list.page %}
+                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('staff.list', page=page_num) }}">{{ page_num }}</a></li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if staff_list.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('staff.list', page=staff_list.next_num) }}">Sau</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% else %}
+        <p class="text-muted">Chưa có viên chức nào.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

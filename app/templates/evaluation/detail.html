@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết Đánh giá - Hệ thống KPI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2><i class="bi bi-clipboard-data"></i> Chi tiết Đánh giá</h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Thông tin đánh giá</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Viên chức:</strong> {{ evaluation.staff.user.full_name }} ({{ evaluation.staff.staff_code }})</p>
+                        <p><strong>Khoa/Phòng ban:</strong> {{ evaluation.staff.department }}</p>
+                        <p><strong>Chức vụ:</strong> {{ evaluation.staff.position }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Kỳ đánh giá:</strong> {{ evaluation.period.name }}</p>
+                        <p><strong>Tổng điểm:</strong> <span class="badge bg-success fs-5">{{ "%.2f"|format(evaluation.total_score) }}</span></p>
+                        <p><strong>Trạng thái:</strong> 
+                            {% if evaluation.status == 'draft' %}
+                            <span class="badge bg-secondary">Nháp</span>
+                            {% elif evaluation.status == 'submitted' %}
+                            <span class="badge bg-primary">Đã nộp</span>
+                            {% elif evaluation.status == 'approved' %}
+                            <span class="badge bg-success">Đã phê duyệt</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        {% if evaluation.status == 'draft' %}
+        <a href="{{ url_for('evaluation.edit', id=evaluation.id) }}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Chỉnh sửa đánh giá
+        </a>
+        {% endif %}
+        
+        {% if evaluation.status == 'submitted' and current_user.role in ['admin', 'manager'] %}
+        <form method="POST" action="{{ url_for('evaluation.approve', id=evaluation.id) }}" style="display: inline;">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i> Phê duyệt
+            </button>
+        </form>
+        {% endif %}
+        
+        <a href="{{ url_for('evaluation.list') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0">Chi tiết các chỉ số KPI</h5>
+    </div>
+    <div class="card-body">
+        {% if evaluation.details %}
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã</th>
+                        <th>Chỉ số KPI</th>
+                        <th>Danh mục</th>
+                        <th>Đơn vị đo</th>
+                        <th>Mục tiêu</th>
+                        <th>Thực tế</th>
+                        <th>Điểm</th>
+                        <th>Điểm tối đa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detail in evaluation.details %}
+                    <tr>
+                        <td><strong>{{ detail.indicator.code }}</strong></td>
+                        <td>{{ detail.indicator.name }}</td>
+                        <td><span class="badge bg-info">{{ detail.indicator.category.name }}</span></td>
+                        <td>{{ detail.indicator.measurement_unit }}</td>
+                        <td>{{ detail.indicator.target_value }}</td>
+                        <td><strong>{{ detail.actual_value or 0 }}</strong></td>
+                        <td><strong class="text-primary">{{ "%.2f"|format(detail.score or 0) }}</strong></td>
+                        <td>{{ detail.indicator.max_score }}</td>
+                    </tr>
+                    {% if detail.self_assessment %}
+                    <tr>
+                        <td colspan="8" class="bg-light">
+                            <strong>Tự đánh giá:</strong> {{ detail.self_assessment }}
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% if detail.manager_comment %}
+                    <tr>
+                        <td colspan="8" class="bg-warning bg-opacity-25">
+                            <strong>Nhận xét của quản lý:</strong> {{ detail.manager_comment }}
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <th colspan="6" class="text-end">Tổng điểm:</th>
+                        <th class="text-primary">{{ "%.2f"|format(evaluation.total_score) }}</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">Chưa có chi tiết đánh giá.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
