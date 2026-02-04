@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Danh sách Đánh giá - Hệ thống KPI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2><i class="bi bi-clipboard-data-fill"></i> Danh sách Đánh giá</h2>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        {% if current_user.role in ['admin', 'manager'] %}
+        <a href="{{ url_for('evaluation.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Tạo đánh giá mới
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if evaluations and evaluations.items %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Viên chức</th>
+                        <th>Kỳ đánh giá</th>
+                        <th>Tổng điểm</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for eval in evaluations.items %}
+                    <tr>
+                        <td>
+                            <strong>{{ eval.staff.staff_code }}</strong><br>
+                            <small>{{ eval.staff.user.full_name }}</small>
+                        </td>
+                        <td>{{ eval.period.name }}</td>
+                        <td>
+                            <strong class="text-primary">{{ "%.2f"|format(eval.total_score) }}</strong>
+                        </td>
+                        <td>
+                            {% if eval.status == 'draft' %}
+                            <span class="badge bg-secondary">Nháp</span>
+                            {% elif eval.status == 'submitted' %}
+                            <span class="badge bg-primary">Đã nộp</span>
+                            {% elif eval.status == 'approved' %}
+                            <span class="badge bg-success">Đã phê duyệt</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ eval.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <a href="{{ url_for('evaluation.detail', id=eval.id) }}" class="btn btn-sm btn-info">
+                                <i class="bi bi-eye"></i> Xem
+                            </a>
+                            {% if eval.status == 'draft' %}
+                            <a href="{{ url_for('evaluation.edit', id=eval.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if evaluations.pages > 1 %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if evaluations.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('evaluation.list', page=evaluations.prev_num) }}">Trước</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in evaluations.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                    {% if page_num %}
+                        {% if page_num == evaluations.page %}
+                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('evaluation.list', page=page_num) }}">{{ page_num }}</a></li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if evaluations.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('evaluation.list', page=evaluations.next_num) }}">Sau</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        {% else %}
+        <div class="alert alert-info">
+            Chưa có đánh giá nào.
+            {% if current_user.role in ['admin', 'manager'] %}
+            <a href="{{ url_for('evaluation.create') }}">Tạo đánh giá mới</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
