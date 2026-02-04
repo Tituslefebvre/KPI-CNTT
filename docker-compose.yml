@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: kpi-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: kpi-ictu
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - kpi-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kpi-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/kpi-ictu
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    networks:
+      - kpi-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: kpi-frontend
+    restart: unless-stopped
+    environment:
+      - API_URL=http://backend:5000/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - kpi-network
+
+networks:
+  kpi-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

@@ -1,0 +1,189 @@
+{
+  "info": {
+    "name": "KPI ICTU API",
+    "description": "API Collection for ICTU KPI Evaluation System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maNhanVien\": \"GV003\",\n  \"hoTen\": \"Nguyễn Văn A\",\n  \"email\": \"nguyenvana@ictu.edu.vn\",\n  \"matKhau\": \"password123\",\n  \"chucVu\": \"Giảng viên\",\n  \"khoa\": \"Khoa Công nghệ Thông tin\",\n  \"boMon\": \"Bộ môn Công nghệ Phần mềm\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"giangvien1@ictu.edu.vn\",\n  \"matKhau\": \"gv123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "KPI Management",
+      "item": [
+        {
+          "name": "Get All KPIs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kpis?namHoc=2024-2025",
+              "host": ["{{base_url}}"],
+              "path": ["kpis"],
+              "query": [
+                {
+                  "key": "namHoc",
+                  "value": "2024-2025"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create KPI",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maKPI\": \"KPI-TEST-001\",\n  \"tenKPI\": \"Test KPI\",\n  \"moTa\": \"Test description\",\n  \"loaiKPI\": \"Giảng dạy\",\n  \"donViDo\": \"giờ\",\n  \"chiTieu\": 100,\n  \"trongSo\": 20,\n  \"namHoc\": \"2024-2025\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/kpis",
+              "host": ["{{base_url}}"],
+              "path": ["kpis"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Evaluation Management",
+      "item": [
+        {
+          "name": "Get All Evaluations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/evaluations",
+              "host": ["{{base_url}}"],
+              "path": ["evaluations"]
+            }
+          }
+        },
+        {
+          "name": "Self Evaluate",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ketQuaThucHien\": 280,\n  \"diemTuDanhGia\": 95,\n  \"ghiChu\": \"Đã hoàn thành vượt chỉ tiêu\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/evaluations/:id/self",
+              "host": ["{{base_url}}"],
+              "path": ["evaluations", ":id", "self"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}
